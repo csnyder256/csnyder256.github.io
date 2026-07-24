@@ -1,0 +1,793 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Cade Snyder | AI Systems and Integration Engineer</title>
+<meta name="description" content="Cade Snyder builds AI integration and agent harnesses: permission enforcement, memory authority, retrieval, and cost governance on production systems.">
+<link rel="canonical" href="https://csnyder256.github.io/">
+<meta property="og:type" content="profile">
+<meta property="profile:first_name" content="Cade">
+<meta property="profile:last_name" content="Snyder">
+<meta property="og:title" content="Cade Snyder | AI Systems and Integration Engineer">
+<meta property="og:description" content="Agent harness architecture, permission-enforced tool gating, retrieval and memory design. Four live B2B products. 1,037 tests green in CI across public repositories.">
+<meta property="og:url" content="https://csnyder256.github.io/">
+<meta property="og:image" content="https://csnyder256.github.io/og.png">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta property="og:image:alt" content="The name Cade Snyder set in large type above a one-line description of AI systems work.">
+<meta name="twitter:card" content="summary_large_image">
+<link rel="preload" as="font" type="font/woff2" crossorigin href="/fonts/Newsreader-Roman-VF.subset.woff2">
+<link rel="preload" as="font" type="font/woff2" crossorigin href="/fonts/IBMPlexMono-Regular.subset.woff2">
+<script type="application/ld+json">
+{"@context":"https://schema.org","@type":"Person","@id":"https://csnyder256.github.io/#person",
+"name":"Cade Snyder","jobTitle":"AI Systems and Integration Engineer",
+"url":"https://csnyder256.github.io/",
+"homeLocation":{"@type":"Place","address":{"@type":"PostalAddress","addressLocality":"LeClaire","addressRegion":"IA","addressCountry":"US"}},
+"sameAs":["https://github.com/csnyder256"],
+"knowsAbout":["agent harness design","permission-aware retrieval","hybrid retrieval with reciprocal rank fusion","LLM cost governance","context compaction","multi-tenant isolation","self-hosted LLM serving","distributed systems","PostgreSQL row-level security"]}
+</script>
+<style>
+@font-face{font-family:"Newsreader";src:url("/fonts/Newsreader-Roman-VF.subset.woff2") format("woff2");font-weight:350 650;font-style:normal;font-display:swap}
+@font-face{font-family:"Newsreader";src:url("/fonts/Newsreader-Italic-VF.subset.woff2") format("woff2");font-weight:350 650;font-style:italic;font-display:swap}
+@font-face{font-family:"IBM Plex Mono";src:url("/fonts/IBMPlexMono-Regular.subset.woff2") format("woff2");font-weight:400;font-style:normal;font-display:swap}
+@font-face{font-family:"Newsreader Fallback";src:local("Georgia"),local("Times New Roman");size-adjust:96%;ascent-override:96%;descent-override:26%;line-gap-override:0%}
+@font-face{font-family:"Plex Mono Fallback";src:local("Cascadia Mono"),local("Consolas"),local("Menlo"),local("Courier New");size-adjust:101%;ascent-override:88%;descent-override:24%;line-gap-override:0%}
+
+:root{
+  color-scheme: light dark;
+  --paper:        light-dark(#F7F4EC, #101215);
+  --surface:      light-dark(#EFEBE1, #171A1E);
+  --ink:          light-dark(#16150F, #E7E4DB);
+  --ink-2:        light-dark(#514D43, #A8A69D);
+  --ink-3:        light-dark(#6B665A, #84827A);
+  --rule:         light-dark(#D5CFC1, #282C31);
+  --rule-strong:  light-dark(#2E2B23, #7E848B);
+  --edge:         light-dark(#8A857A, #636970);
+  --accent:       light-dark(#8C2F1E, #E3856A);
+  --accent-hover: light-dark(#6E2416, #EFA891);
+  --select-bg:    light-dark(#EDDCC9, #3A2A20);
+
+  --serif:"Newsreader","Newsreader Fallback",Georgia,serif;
+  --mono:"IBM Plex Mono","Plex Mono Fallback",ui-monospace,"Courier New",monospace;
+
+  --fs-label:0.6875rem; --fs-micro:0.8125rem; --fs-note:0.9375rem; --fs-body:1.125rem;
+  --fs-lead:clamp(1.1875rem, 1.0972rem + 0.370vw, 1.375rem);
+  --fs-h3:clamp(1.375rem, 1.2546rem + 0.494vw, 1.625rem);
+  --fs-deck:clamp(1.5rem, 1.259rem + 0.988vw, 2rem);
+  --fs-mast:clamp(3.25rem, 1.444rem + 7.407vw, 7rem);
+
+  --bleed:4rem; --rail-meta:9rem; --measure:34rem; --rail-note:13rem; --gutter:2rem;
+  --trim:72rem; --rule-w:1px; --lh:28px;
+}
+:root[data-theme="light"]{color-scheme:light}
+:root[data-theme="dark"]{color-scheme:dark}
+@media (min-resolution:2dppx){:root{--rule-w:0.5px}}
+
+*,*::before,*::after{box-sizing:border-box;border-radius:0}
+img,picture,video,canvas,svg,button,input,textarea,select,fieldset{border-radius:0}
+button,input,select,textarea{font:inherit;color:inherit;background:none;border:0;margin:0;-webkit-appearance:none;appearance:none}
+html{scroll-behavior:smooth;-webkit-text-size-adjust:100%}
+body{margin:0;background:var(--paper);color:var(--ink);
+  font-family:var(--serif);font-size:var(--fs-body);line-height:1.5556;
+  font-optical-sizing:auto;font-variation-settings:"opsz" 16,"wght" 410;
+  hanging-punctuation:first allow-end;
+  -webkit-font-smoothing:antialiased;text-rendering:optimizeLegibility}
+@media (prefers-color-scheme:dark){body{font-variation-settings:"opsz" 16,"wght" 390}}
+@media (max-width:45.99rem){body{font-size:1.0625rem;line-height:1.6471}}
+strong,b{font-variation-settings:"opsz" 16,"wght" 600}
+::selection{background:var(--select-bg);color:var(--ink)}
+p{margin:0 0 var(--lh)}
+p:last-child{margin-bottom:0}
+p,li{text-wrap:pretty;font-variant-numeric:proportional-nums}
+h1,h2,h3,h4{margin:0;font-weight:400;text-wrap:balance;max-inline-size:24ch}
+[id]{scroll-margin-block-start:2rem}
+
+.mono,.fig-value,.meta,time,.stack,.filterbar button,.folio,.colophon,.evidence li::before,
+.dl dt,.ledger .src,.ledger .idx,.kind,.entry-num,.fig-label,.eval dt,.stack-fig{
+  font-family:var(--mono);font-variant-numeric:tabular-nums lining-nums;
+  font-feature-settings:"lnum" 1,"zero" 1}
+
+a{color:var(--ink);text-decoration:underline;text-decoration-color:var(--accent);
+  text-decoration-thickness:1px;text-underline-offset:3px}
+@media (hover:hover){
+  a{transition:color 180ms cubic-bezier(0.16,1,0.3,1),text-decoration-color 180ms cubic-bezier(0.16,1,0.3,1)}
+  a:hover{color:var(--accent-hover);text-decoration-color:var(--accent-hover)}
+}
+:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
+
+.skip-link{position:absolute;left:-9999px;top:0;z-index:10;
+  font-family:var(--mono);font-size:var(--fs-micro);padding:10px 14px;
+  background:var(--surface);border:2px solid var(--rule-strong);color:var(--ink);text-decoration:none}
+.skip-link:focus{left:1rem;top:1rem}
+
+/* ---------- grid ---------- */
+.sheet{position:relative;inline-size:var(--trim);margin-inline:auto;padding-block-end:4rem;
+  display:grid;column-gap:var(--gutter);
+  grid-template-columns:
+    [bleed-start] var(--bleed)
+    [meta-start] var(--rail-meta)
+    [meta-end main-start] var(--measure)
+    [main-end note-start] var(--rail-note)
+    [note-end] var(--bleed) [bleed-end];}
+.spine{position:absolute;inset-block:0;
+  inset-inline-start:calc(var(--bleed) + var(--rail-meta) + var(--measure) + var(--gutter) * 2.5);
+  inline-size:0;border-inline-start:var(--rule-w) solid var(--rule);pointer-events:none}
+
+.sheet > section{grid-column:bleed-start / bleed-end;display:grid;
+  grid-template-columns:subgrid;column-gap:var(--gutter)}
+@supports not (grid-template-columns:subgrid){
+  .sheet > section{grid-template-columns:var(--bleed) var(--rail-meta) var(--measure) var(--rail-note) var(--bleed)}
+}
+.sheet > section > h2{grid-column:meta-start / meta-end;text-align:right;
+  font-family:var(--mono);font-size:var(--fs-label);line-height:1;letter-spacing:0.1em;
+  text-transform:uppercase;color:var(--ink-3);position:sticky;inset-block-start:1.75rem;align-self:start;
+  padding-block-start:2px}
+.col{grid-column:main-start / main-end}
+.wide{grid-column:meta-start / note-end}
+
+/* ---------- rules and separators ---------- */
+.dept{border-block-start:2px solid var(--rule-strong);padding-block-start:12px;margin-block-start:84px}
+.reset{margin-block-start:168px}
+@media (max-width:56.24rem){.dept{margin-block-start:56px}.reset{margin-block-start:112px}}
+.sep-row{display:flex;flex-wrap:wrap;align-items:center;font-family:var(--mono);
+  font-size:var(--fs-micro);color:var(--ink-2);line-height:1.3846}
+.sep-row > * + *::before{content:"";display:inline-block;inline-size:var(--rule-w);block-size:12px;
+  background:var(--rule-strong);margin-inline:14px;vertical-align:-1px}
+/* a title that carries two names keeps the serif; only the separator behaviour applies */
+.entry h3.sep-row{font-family:var(--serif);font-size:var(--fs-h3);color:var(--ink);
+  align-items:baseline;column-gap:0;row-gap:2px;max-inline-size:none}
+.entry h3.sep-row > * + *::before{block-size:0.72em;margin-inline:16px;vertical-align:-0.02em;
+  background:var(--rule-strong)}
+
+/* ---------- folio ---------- */
+.folio{inline-size:var(--trim);margin-inline:auto;
+  display:grid;grid-template-columns:
+    [bleed-start] var(--bleed) [meta-start] var(--rail-meta) [meta-end main-start] var(--measure)
+    [main-end note-start] var(--rail-note) [note-end] var(--bleed) [bleed-end];
+  column-gap:var(--gutter)}
+.folio > div{grid-column:meta-start / note-end;display:flex;flex-wrap:wrap;align-items:center;
+  font-size:var(--fs-label);letter-spacing:0.1em;text-transform:uppercase;color:var(--ink-3);
+  border-block-end:var(--rule-w) solid var(--rule);padding-block:20px 8px;line-height:1}
+.folio .last{margin-inline-start:auto}
+.folio .last::before{display:none}
+
+/* ---------- masthead ---------- */
+.masthead{padding-block-start:40px;padding-block-end:clamp(3.5rem,8vh,7rem)}
+.masthead h1{grid-column:meta-start / bleed-end;font-size:var(--fs-mast);line-height:0.92;
+  letter-spacing:-0.021em;margin-inline-start:-0.055em;white-space:nowrap;
+  font-variation-settings:"opsz" 72,"wght" 500;max-inline-size:none}
+.masthead-rule{grid-column:bleed-start / bleed-end;block-size:0;
+  border-block-start:2px solid var(--accent);margin-block:16px 20px}
+.deck{grid-column:main-start / note-end;font-size:var(--fs-deck);line-height:1.18;
+  letter-spacing:-0.014em;font-variation-settings:"opsz" 40,"wght" 400;
+  max-inline-size:31rem;color:var(--ink)}
+.now{grid-column:main-start / main-end;margin-block-start:var(--lh);
+  font-family:var(--mono);font-size:var(--fs-micro);color:var(--ink)}
+.now time,.now .dim{color:var(--ink-2)}
+.masthead .sep-row{grid-column:meta-start / note-end;margin-block-start:var(--lh)}
+
+/* ---------- figure strip ---------- */
+.figures{grid-column:meta-start / note-end;display:flex;flex-wrap:wrap;row-gap:12px;
+  border-block:var(--rule-w) solid var(--rule);padding-block:10px;margin-block:20px 24px}
+.figures > div{border-inline-start:var(--rule-w) solid var(--rule);padding:0 24px 0 12px}
+.fig-label{display:block;font-size:var(--fs-label);line-height:1;text-transform:uppercase;
+  letter-spacing:0.1em;color:var(--ink-3)}
+.fig-value{display:block;margin-block-start:4px;font-size:var(--fs-lead);line-height:1.1;
+  letter-spacing:-0.005em;color:var(--ink)}
+.fig-value.is-zero{color:var(--accent)}
+
+/* ---------- entries ---------- */
+.entry{grid-column:bleed-start / bleed-end;display:grid;grid-template-columns:subgrid;
+  column-gap:var(--gutter);margin-block-start:56px}
+@supports not (grid-template-columns:subgrid){
+  .entry{grid-template-columns:var(--bleed) var(--rail-meta) var(--measure) var(--rail-note) var(--bleed)}
+}
+.entry > .meta{grid-column:meta-start / meta-end;text-align:right;color:var(--ink-3)}
+.entry-num{display:block;font-size:1.625rem;line-height:1;color:var(--ink-2);margin-inline-start:-0.5rem}
+.kind{display:block;font-size:var(--fs-label);letter-spacing:0.1em;text-transform:uppercase;margin-block-start:4px}
+.meta .yr{display:block;font-size:var(--fs-micro);margin-block-start:2px}
+.entry h3,.entry h4{grid-column:main-start / main-end;font-size:var(--fs-h3);line-height:1.2;
+  letter-spacing:-0.011em;font-variation-settings:"opsz" 40,"wght" 500;color:var(--ink)}
+.entry .pos{grid-column:main-start / main-end;font-style:italic;color:var(--ink-2);
+  max-inline-size:34rem;margin-block-start:8px}
+.entry .body{grid-column:main-start / main-end}
+.entry .opener{grid-column:main-start / main-end;font-size:var(--fs-lead);line-height:1.4;
+  color:var(--ink);max-inline-size:32rem;margin-block-start:10px}
+.entry .opener-2{grid-column:main-start / main-end;margin-block-start:16px}
+.sep{grid-column:meta-start / main-end;block-size:0;border-block-start:var(--rule-w) solid var(--rule);margin-block-start:56px}
+
+/* ---------- evidence list ---------- */
+.evidence{list-style:none;counter-reset:ev;margin:24px 0 0;padding:0;grid-column:main-start / main-end}
+.evidence li{counter-increment:ev;border-block-start:var(--rule-w) solid var(--rule);
+  padding-block:12px 16px;padding-inline-start:2.25rem;text-indent:-2.25rem;margin-block-end:16px}
+.evidence li:last-child{margin-block-end:0}
+.evidence li::before{content:counter(ev,decimal-leading-zero);display:inline-block;inline-size:2.25rem;
+  text-indent:0;font-size:var(--fs-micro);line-height:1;color:var(--ink-3)}
+.evidence.tight li{font-size:var(--fs-note);line-height:1.4667}
+
+/* ---------- sidenotes ---------- */
+.note{position:relative;float:right;clear:right;inline-size:var(--rail-note);
+  margin-inline-end:calc(-1 * (var(--rail-note) + var(--gutter)));margin-block:0 var(--lh);
+  font-size:var(--fs-note);line-height:1.4667;color:var(--ink-2);text-indent:0;
+  font-variation-settings:"opsz" 10,"wght" 400}
+.note::before{content:"";position:absolute;inset-inline-start:calc(-1 * var(--gutter) / 2);
+  inset-block-start:0.5rem;inline-size:calc(var(--gutter) / 2);block-size:0;
+  border-block-start:var(--rule-w) solid var(--rule)}
+.note .label{display:block;margin-block-end:4px;font-family:var(--mono);font-size:var(--fs-label);
+  letter-spacing:0.1em;text-transform:uppercase;color:var(--ink-3)}
+
+/* ---------- stack + link lines ---------- */
+.stackline{grid-column:meta-start / note-end;display:grid;grid-template-columns:subgrid;
+  border-block-start:var(--rule-w) solid var(--rule);padding-block-start:10px;margin-block-start:24px}
+@supports not (grid-template-columns:subgrid){.stackline{grid-template-columns:var(--rail-meta) var(--measure) var(--rail-note)}}
+.stackline dt{grid-column:meta-start / meta-end;text-align:right;font-family:var(--mono);
+  font-size:var(--fs-label);letter-spacing:0.1em;text-transform:uppercase;color:var(--ink-3)}
+.stackline dd{grid-column:main-start / note-end;margin:0;font-family:var(--mono);
+  font-size:var(--fs-micro);line-height:1.5;color:var(--ink-2)}
+.links{grid-column:main-start / main-end;margin-block-start:12px;font-family:var(--mono);
+  font-size:var(--fs-micro)}
+
+/* ---------- authority stack ---------- */
+.stack-fig{grid-column:main-start / note-end;margin-block:24px 8px}
+.stack-fig .cap{font-size:var(--fs-micro);color:var(--ink-2);margin-block-end:10px}
+.stack-fig .lbl{display:block;font-size:var(--fs-label);letter-spacing:0.1em;text-transform:uppercase;
+  color:var(--ink-3);margin-block-end:6px}
+.stack-fig .row{display:grid;grid-template-columns:14rem 1fr 9rem;column-gap:16px;
+  align-items:center;block-size:28px}
+.stack-fig .row span:first-child{font-size:var(--fs-micro);color:var(--ink)}
+.stack-fig .row span:last-child{font-size:var(--fs-label);letter-spacing:0.1em;text-transform:uppercase;
+  color:var(--ink-3);text-align:right}
+.stack-fig .row > .w-d{border-block-start:var(--rule-w) dashed var(--rule)}
+.stack-fig .row > .w-0{border-block-start:var(--rule-w) solid var(--rule)}
+.stack-fig .row > .w-1{border-block-start:var(--rule-w) solid var(--rule-strong)}
+.stack-fig .row > .w-2{border-block-start:2px solid var(--rule-strong)}
+.stack-fig .dim{position:relative;border-block-start:var(--rule-w) solid var(--rule-strong)}
+.stack-fig .dim::before,.stack-fig .dim::after{content:"";position:absolute;inset-block-start:-4px;
+  inline-size:0;block-size:8px;border-inline-start:var(--rule-w) solid var(--rule-strong)}
+.stack-fig .dim::before{inset-inline-start:0}
+.stack-fig .dim::after{inset-inline-end:0}
+.stack-fig .one{font-size:var(--fs-note);color:var(--ink);text-align:right}
+
+/* ---------- eval panel ---------- */
+.eval{grid-column:main-start / note-end;position:relative;z-index:1;background:var(--surface);
+  border-inline-start:2px solid var(--rule-strong);padding:20px 24px;margin-block:56px;
+  display:grid;grid-template-columns:8rem 1fr;column-gap:20px;row-gap:16px}
+.eval dt{font-size:var(--fs-label);line-height:1.4;text-transform:uppercase;letter-spacing:0.1em;color:var(--ink-3)}
+.eval dd{margin:0;font-size:1.0625rem;line-height:1.53;max-inline-size:28rem;color:var(--ink)}
+.eval-h{grid-column:main-start / main-end;font-family:var(--mono);font-size:var(--fs-label);
+  letter-spacing:0.1em;text-transform:uppercase;color:var(--ink-3);margin-block-start:56px}
+
+/* ---------- definition lists ---------- */
+.dl{grid-column:meta-start / note-end;display:grid;grid-template-columns:subgrid;column-gap:var(--gutter)}
+@supports not (grid-template-columns:subgrid){.dl{grid-template-columns:var(--rail-meta) var(--measure) var(--rail-note)}}
+.dl dt{grid-column:meta-start / meta-end;text-align:right;font-size:var(--fs-label);
+  letter-spacing:0.1em;text-transform:uppercase;color:var(--ink-3);line-height:1.45}
+.dl dd{grid-column:main-start / note-end;margin:0}
+.dl > *{border-block-start:var(--rule-w) solid var(--rule);padding-block:12px}
+.dl.harness dd{font-size:1rem;line-height:1.5;max-inline-size:40rem}
+.dl.depth dd{font-size:var(--fs-note);line-height:1.4667;max-inline-size:none;color:var(--ink)}
+.dl code{font-family:var(--mono);font-size:0.94em;background:none;border:0}
+.closed{grid-column:meta-start / note-end;block-size:0;border-block-start:2px solid var(--rule-strong);margin-block-start:12px}
+
+/* ---------- evidence ledger ---------- */
+.filterbar{grid-column:main-start / note-end;display:flex;flex-wrap:wrap;gap:0;margin-block:20px 4px}
+.filterbar button{font-family:var(--mono);font-size:var(--fs-micro);line-height:1;letter-spacing:0.04em;
+  border-block-end:var(--rule-w) solid transparent;padding:6px 2px;margin-inline-end:20px;
+  color:var(--ink-2);cursor:pointer}
+.filterbar button[aria-pressed="true"]{color:var(--ink);border-block-end-color:var(--ink)}
+@media (hover:hover){
+  .filterbar button{transition:color 180ms cubic-bezier(0.16,1,0.3,1),border-color 180ms cubic-bezier(0.16,1,0.3,1)}
+  .filterbar button:hover{color:var(--ink)}
+}
+.filter-status{grid-column:main-start / main-end;font-family:var(--mono);font-size:var(--fs-label);
+  letter-spacing:0.1em;text-transform:uppercase;color:var(--ink-3);margin:0 0 12px}
+.ledger{grid-column:meta-start / note-end;list-style:none;margin:0;padding:0;
+  display:grid;grid-template-columns:subgrid;column-gap:var(--gutter)}
+@supports not (grid-template-columns:subgrid){.ledger{grid-template-columns:var(--rail-meta) var(--measure) var(--rail-note)}}
+.ledger li{display:grid;grid-template-columns:subgrid;grid-column:meta-start / note-end;
+  border-block-start:var(--rule-w) solid var(--rule);padding-block:12px}
+@supports not (grid-template-columns:subgrid){.ledger li{grid-template-columns:var(--rail-meta) var(--measure) var(--rail-note)}}
+.ledger .m{grid-column:meta-start / meta-end;text-align:right}
+.ledger .idx{display:block;font-size:var(--fs-micro);color:var(--ink-3)}
+.ledger .src{display:block;font-size:var(--fs-label);letter-spacing:0.08em;text-transform:uppercase;
+  color:var(--ink-3);margin-block-start:4px;overflow-wrap:anywhere}
+.ledger .c{grid-column:main-start / main-end;font-size:1rem;line-height:1.5;max-inline-size:34rem}
+.ledger[data-filter="rag-os"] > li:not([data-system="rag-os"]),
+.ledger[data-filter="org-memory-os"] > li:not([data-system="org-memory-os"]),
+.ledger[data-filter="shadow-options"] > li:not([data-system="shadow-options"]),
+.ledger[data-filter="clarus"] > li:not([data-system="clarus"]){display:none}
+
+/* ---------- summary ---------- */
+.kicker{grid-column:main-start / main-end;font-family:var(--mono);font-size:var(--fs-label);
+  letter-spacing:0.1em;text-transform:uppercase;color:var(--ink-3);margin-block-end:8px}
+.lede{grid-column:main-start / main-end;font-size:var(--fs-lead);line-height:1.4;max-inline-size:32rem}
+.lede::first-letter{float:left;font-size:6.6rem;line-height:0.68;
+  font-variation-settings:"opsz" 72,"wght" 400;margin-block-start:0.04em;
+  padding-inline-end:0.22em;color:var(--ink)}
+.standfirst{grid-column:main-start / main-end;font-style:italic;font-size:var(--fs-lead);
+  line-height:1.4;color:var(--ink-2);max-inline-size:32rem}
+.w1{grid-column:meta-start / main-end;block-size:0;
+  border-block-start:var(--rule-w) solid var(--rule-strong);margin-block-start:16px}
+
+/* ---------- record + contact ---------- */
+.rec dd .t{display:block;font-size:var(--fs-body);font-variation-settings:"opsz" 16,"wght" 500;color:var(--ink)}
+.rec dd .d{display:block;font-size:var(--fs-note);color:var(--ink-2);margin-block-start:4px;max-inline-size:34rem}
+.rec .past .t{color:var(--ink-2)}
+.contact{grid-column:main-start / main-end}
+.contact p{margin-block-end:var(--lh)}
+.btn-print,.btn-dl{font-family:var(--mono);font-size:var(--fs-micro);line-height:1;
+  border:var(--rule-w) solid var(--edge);background:transparent;color:var(--ink-2);
+  padding:6px 10px;cursor:pointer;text-decoration:none;display:inline-block}
+.btn-dl{color:var(--ink)}
+@media (hover:hover){
+  .btn-print,.btn-dl{transition:color 180ms cubic-bezier(0.16,1,0.3,1),border-color 180ms cubic-bezier(0.16,1,0.3,1)}
+  .btn-print:hover,.btn-dl:hover{color:var(--accent-hover);border-color:var(--accent)}
+}
+.sep-row .btn-dl + .btn-print{margin-inline-start:8px}
+.after-record{grid-column:main-start / main-end;margin-block-start:var(--lh)}
+
+/* ---------- colophon ---------- */
+.colophon{inline-size:var(--trim);margin:56px auto 0;display:grid;
+  grid-template-columns:[bleed-start] var(--bleed) [meta-start] var(--rail-meta) [meta-end main-start] var(--measure)
+    [main-end note-start] var(--rail-note) [note-end] var(--bleed) [bleed-end];column-gap:var(--gutter)}
+.colophon > div{grid-column:meta-start / note-end;display:flex;flex-wrap:wrap;align-items:baseline;
+  gap:0 8px;border-block-start:2px solid var(--rule-strong);padding-block:20px 40px;
+  font-size:var(--fs-label);letter-spacing:0.1em;text-transform:uppercase;color:var(--ink-3);line-height:1.7}
+.colophon .mark{margin-inline-start:auto}
+.print-only{display:none}
+
+/* ---------- responsive ---------- */
+@media (max-width:73.99rem){
+  .sheet,.folio,.colophon{inline-size:min(100% - 3rem, 48rem);column-gap:1.5rem;
+    grid-template-columns:[bleed-start meta-start] 7.5rem [meta-end main-start] minmax(0,34rem) [main-end note-start note-end bleed-end]}
+  .spine{display:none}
+  .note{float:none;inline-size:auto;margin-inline:0;max-inline-size:none;
+    border-inline-start:2px solid var(--rule);padding-inline-start:1rem;margin-block:12px 20px}
+  .note::before{display:none}
+  .masthead h1{white-space:normal}
+  .stack-fig .row{grid-template-columns:11rem 1fr 7rem}
+  .eval{grid-template-columns:6.5rem 1fr}
+}
+@media (max-width:45.99rem){
+  .sheet,.folio,.colophon{inline-size:min(100% - 2rem, 34rem);
+    grid-template-columns:[bleed-start meta-start main-start] minmax(0,1fr) [main-end note-start note-end bleed-end]}
+  .sheet > section > h2{position:static;text-align:left;margin-block-end:12px}
+  .entry > .meta{text-align:left;display:flex;flex-wrap:wrap;align-items:baseline;gap:0 12px;
+    border-block-end:var(--rule-w) solid var(--rule);padding-block-end:6px;margin-block-end:12px}
+  .entry-num{margin-inline-start:0;font-size:var(--fs-micro)}
+  .kind,.meta .yr{margin-block-start:0}
+  .dl dt,.stackline dt,.ledger .m{text-align:left}
+  .dl dt{border-block-end:0;padding-block-end:0}
+  .dl dd{padding-block-start:4px;border-block-start:0}
+  .ledger li{padding-block:10px}
+  .stack-fig .row{grid-template-columns:9rem 1fr 5.5rem;column-gap:10px}
+  .stack-fig .row span:first-child,.stack-fig .row span:last-child{font-size:0.625rem}
+  .eval{grid-template-columns:1fr;row-gap:6px;padding:16px 18px}
+  .eval dd{margin-block-end:8px}
+  .lede::first-letter{font-size:4.6rem}
+  .masthead h1{white-space:normal}
+  .masthead{padding-block-end:clamp(1.75rem,5vh,2.75rem)}
+  .figures > div{padding:0 16px 0 10px}
+}
+
+@media (prefers-reduced-motion:reduce){
+  html{scroll-behavior:auto}
+  *,*::before,*::after{animation-duration:.01ms !important;animation-iteration-count:1 !important;
+    transition-duration:.01ms !important;scroll-behavior:auto !important}
+}
+
+/* ---------- print ---------- */
+@page{size:letter portrait;margin:14mm 16mm}
+@media print{
+  :root{color-scheme:light;
+    --paper:#FFFFFF;--surface:#F2F0EA;--ink:#101010;--ink-2:#3A3A36;--ink-3:#57544D;
+    --rule:#C9C4B8;--rule-strong:#2E2B23;--accent:#7A2818}
+  html,body{background:#FFFFFF}
+  body{font-size:9.5pt;line-height:1.38}
+  /* the printed edition is a different edit of the same DOM: screen-only enrichments come out */
+  .skip-link,.spine,.filterbar,.filter-status,.btn-print,.btn-dl,.note,#evidence,.harness-block,
+  .entry .evidence.full li:nth-child(4),
+  .stack-fig,.kicker,#also-public,.colophon{display:none !important}
+  .print-only{display:block}
+  .sheet,.folio,.colophon{inline-size:auto;column-gap:6mm;
+    grid-template-columns:[bleed-start meta-start] 30mm [meta-end main-start] 148mm [main-end note-start note-end bleed-end]}
+  .entry,.dl,.ledger,.ledger li,.stackline{column-gap:6mm}
+  main p,main li{max-inline-size:118mm}
+  .ledger > li{display:grid !important}
+  .dl dd{font-size:8.5pt;line-height:1.32}
+  .sheet > section > h2{position:static}
+  h1,h2,h3,h4{break-after:avoid-page}
+  li,.figures,.eval,.stack-fig,.dl > *,.stackline,.ledger li{break-inside:avoid}
+  .entry > .meta{break-after:avoid-page}
+  p,li{orphans:3;widows:3}
+  .fig-value.is-zero,.masthead-rule,.eval{-webkit-print-color-adjust:exact;print-color-adjust:exact}
+  /* every link on this page already reads as its own URL, so appending href would duplicate it */
+  a::after{content:""}
+  a{text-decoration-color:var(--ink-3)}
+  /* print type scale: the screen display registers are far too large for paper */
+  .masthead h1{font-size:26pt;line-height:1;margin-inline-start:-0.04em;white-space:normal}
+  .masthead-rule{margin-block:6px 8px}
+  .deck{font-size:11.5pt;line-height:1.25;max-inline-size:none}
+  .now{font-size:8pt;margin-block-start:6px}
+  .masthead .sep-row{font-size:7.5pt;margin-block-start:8px}
+  .lede{font-size:9.5pt;line-height:1.4;max-inline-size:none}
+  .lede::first-letter{float:none;font-size:inherit;line-height:inherit;padding-inline-end:0}
+  .kicker{font-size:6.5pt;margin-block-end:4px}
+  .standfirst,.entry .opener{font-size:9.5pt;line-height:1.35;max-inline-size:none;margin-block-start:4px}
+  .entry h3,.entry h4,.entry h3.sep-row{font-size:12pt;line-height:1.15}
+  .entry .pos{font-size:9pt;line-height:1.3;margin-block-start:3px;max-inline-size:none}
+  .entry-num{font-size:9pt}
+  .kind,.meta .yr{font-size:6.5pt}
+  .figures{padding-block:5px;margin-block:8px 8px}
+  .figures > div{padding:0 12px 0 8px}
+  .fig-label{font-size:6pt}
+  .fig-value{font-size:9.5pt}
+  .evidence{margin-block-start:8px}
+  .evidence li{padding-block:5px 5px;margin-block-end:5px;padding-inline-start:1.6rem;text-indent:-1.6rem}
+  .evidence li::before{inline-size:1.6rem;font-size:7.5pt}
+  .evidence.tight li{font-size:9pt;line-height:1.34}
+  .stack-fig{margin-block:8px 4px}
+  .stack-fig .row{block-size:15px;grid-template-columns:11rem 1fr 8rem}
+  .stack-fig .row span:first-child{font-size:7.5pt}
+  .stack-fig .row span:last-child,.stack-fig .one{font-size:6.5pt}
+  .stack-fig .cap{font-size:7pt;margin-block-end:4px}
+  .stack-fig .lbl{font-size:6.5pt;margin-block-end:3px}
+  .stackline{margin-block-start:8px;padding-block-start:5px}
+  .stackline dt{font-size:6.5pt}
+  .stackline dd,.links{font-size:7.5pt;line-height:1.4}
+  .links{margin-block-start:5px}
+  .eval{margin-block:10px;padding:10px 12px;grid-template-columns:6rem 1fr;row-gap:6px;column-gap:12px}
+  .eval dt{font-size:6.5pt}
+  .eval dd{font-size:9pt;line-height:1.35;max-inline-size:none}
+  .eval-h{font-size:6.5pt;margin-block-start:14px}
+  .dl > *{padding-block:5px}
+  .dl dt{font-size:6.5pt;line-height:1.3}
+  .rec dd .t{font-size:9.5pt}
+  .rec dd .d{font-size:8.5pt;max-inline-size:none;margin-block-start:2px}
+  .contact{font-size:9pt}
+  .contact p{margin-block-end:4px}
+  .sheet > section > h2{font-size:6.5pt;text-align:right}
+  .sep{margin-block-start:10px}
+  .closed{margin-block-start:6px}
+  .w1{margin-block-start:8px}
+  .folio > div{font-size:6.5pt;padding-block:0 5px}
+  .colophon{margin-block-start:14px}
+  .colophon > div{font-size:6pt;padding-block:6px 0;line-height:1.5}
+  .print-only{font-size:8pt;color:var(--ink-3);margin-block-start:8px}
+  .dept{margin-block-start:14px;padding-block-start:7px}
+  .reset{margin-block-start:16px}
+  .entry{margin-block-start:12px}
+  .masthead{padding-block:0 10px}
+  .sheet{padding-block-end:0}
+  *,*::before,*::after{transition:none !important;animation:none !important}
+}
+</style>
+</head>
+<body>
+<a class="skip-link" href="#main">Skip to content</a>
+
+<header class="folio">
+  <div class="sep-row">
+    <span>Cade Snyder</span>
+    <span>AI Systems and Integration Engineer</span>
+    <span>LeClaire IA</span>
+    <span class="last">Updated <time datetime="2026-07-23">2026-07-23</time></span>
+  </div>
+</header>
+
+<main id="main" tabindex="-1">
+<div class="sheet">
+<div class="spine" aria-hidden="true"></div>
+
+<!-- ============ MASTHEAD ============ -->
+<section class="masthead" aria-label="Introduction">
+  <h1>Cade Snyder</h1>
+  <div class="masthead-rule"></div>
+  <p class="deck">AI integration and agent-harness architecture: memory authority, permission enforcement, retrieval, and cost governance. Full-stack delivery underneath.</p>
+  <p class="now">Software Engineer, Clarus platform. <span class="dim"><time datetime="2026-03">Mar 2026</time> to present</span></p>
+  <div class="sep-row">
+    <span>LeClaire, IA</span>
+    <a data-mail href="#contact">snydercade123 at gmail dot com</a>
+    <a href="https://github.com/csnyder256" rel="noopener noreferrer" target="_blank">github.com/csnyder256</a>
+    <a href="https://clarusclm.com" rel="noopener noreferrer" target="_blank">clarusclm.com</a>
+    <span><a class="btn-dl" href="/Cade-Snyder-Resume.pdf">Resume PDF, 2 pp.</a><button type="button" class="btn-print" hidden>Print this page</button></span>
+  </div>
+  <div class="figures">
+    <div><span class="fig-label">Tests green in CI</span><span class="fig-value">1,037</span></div>
+    <div><span class="fig-label">HTTP endpoints</span><span class="fig-value">1,019</span></div>
+    <div><span class="fig-label">PostgreSQL tables</span><span class="fig-value">263</span></div>
+    <div><span class="fig-label">Live B2B products</span><span class="fig-value">4</span></div>
+    <div><span class="fig-label">Published specifications</span><span class="fig-value">2</span></div>
+  </div>
+</section>
+
+<!-- ============ SUMMARY ============ -->
+<section class="dept" id="summary" aria-labelledby="h-summary">
+  <h2 id="h-summary">Summary</h2>
+  <p class="kicker">LeClaire, Iowa</p>
+  <p class="lede">I build the harness around the model: what it may touch, what it remembers, what it retrieves, and what it costs. At Clarus I work on the AI integration surface of four live B2B products in one monorepo of 10 backend services and 1,019 HTTP endpoints, routing GPT-4o, Anthropic Claude, and a self-hosted olmOCR model served on vLLM behind per-tenant key routing, token quotas, and Presidio-based PII anonymization. Outside the platform I have published two architecture specifications for long-running agent systems: RAG-OS, the compiled architecture of a system I run on my own hardware, and org-memory-os, which takes that design apart to name which single-operator invariants stop holding once an organization is using it. Both are organized around one question, which is where authority lives when a model is in the loop and the model is the least reliable component in it. The public code carries 1,037 automated tests green in CI across MIT-licensed repositories.<span class="note"><span class="label">Sought</span>The AI platform itself. The harness, the retrieval, the memory, the controls, and the budget, owned end to end.</span></p>
+</section>
+
+<!-- ============ SELECTED SYSTEMS ============ -->
+<section class="dept reset" id="systems" aria-labelledby="h-systems">
+  <h2 id="h-systems">Selected systems</h2>
+  <p class="standfirst">Four entries. Every number below is measured, not estimated.</p>
+  <div class="w1"></div>
+
+  <!-- 01 CLARUS -->
+  <article class="entry">
+    <div class="meta"><span class="entry-num">01</span><span class="kind">Production</span><span class="yr">2026</span></div>
+    <h3>Clarus platform: CLM, CFO, HR, Nexus</h3>
+    <p class="pos">Four live B2B SaaS products in one production monorepo. The model layer is a governed surface with routing, quotas, and anonymization in front of it.</p>
+    <div class="figures">
+      <div><span class="fig-label">Backend services</span><span class="fig-value">10</span></div>
+      <div><span class="fig-label">HTTP endpoints</span><span class="fig-value">1,019</span></div>
+      <div><span class="fig-label">PostgreSQL tables</span><span class="fig-value">263</span></div>
+      <div><span class="fig-label">Alembic migrations</span><span class="fig-value">203</span></div>
+      <div><span class="fig-label">Clause types / categories</span><span class="fig-value">42 / 11</span></div>
+      <div><span class="fig-label">OAuth platforms</span><span class="fig-value">9</span></div>
+    </div>
+    <ol class="evidence full">
+      <li><span class="note"><span class="label">The four products</span>Clarus CLM, contract intelligence that thinks at the clause level. Clarus CFO, the autonomous CFO for software. Clarus HR, the HR engine that runs itself. Clarus Nexus, the organizational reality engine.</span>Three model paths behind one integration layer: GPT-4o, Anthropic Claude, and a self-hosted olmOCR model served on vLLM for document extraction and classification. Per-tenant API key routing, per-tenant token quotas, and Presidio-based PII anonymization apply to all of it.</li>
+      <li><span class="note"><span class="label">Family capabilities</span>Clauses as versioned searchable entities; amendments that create versions instead of overwriting; search that comprehends meaning; autonomous spend and contract operation; intercepting auto-renewals; three-way matching across purchase orders, invoices and contracts; policy rollouts and acknowledgment campaigns; payroll exceptions; contractor classification risk; multi-state compliance; continuous modeling of company operations across contracts, spend, approvals, vendors, obligations and workflows; detecting contradictions between stated intent and actual operation; preserving decision reasoning; simulating changes before they are made.</span>Contract intelligence parses raw OOXML and PDF into a ProseMirror representation, types every clause against a 42-type taxonomy across 11 categories, scores per-clause risk, and overlays amendments as new versions instead of overwriting the original. Retrieval is hybrid: semantic search over pgvector embeddings fused with keyword search. Editing is real-time and collaborative over Yjs.</li>
+      <li>Per-request tenant isolation is enforced in the database by PostgreSQL row-level security across all 263 tables, under 203 Alembic migrations and 10 backend services.</li>
+      <li>ClarusStream, an in-house Kafka-wire-compatible message broker written in Go, with consumer groups, SASL, ACLs, and S3 segment tiering. Producers publish through a transactional outbox drained by a relay service with retries and exponential backoff. The nine OAuth platform integrations and Stripe billing are verified by an adversarial chaos-testing harness running nightly and weekly burn-ins in CI.</li>
+    </ol>
+    <dl class="stackline"><dt>Stack</dt><dd>Python, FastAPI, async SQLAlchemy 2.0, Pydantic v2, Alembic, Go, PostgreSQL 16, row-level security, pgvector, Redis, AWS S3, Next.js App Router, React 19, TipTap/ProseMirror, Yjs, Zustand, vLLM, Presidio, Stripe, Docker, Helm</dd></dl>
+    <p class="links sep-row"><a href="https://clarusclm.com" rel="noopener noreferrer" target="_blank">clarusclm.com</a><a href="https://clarusclm.com/products" rel="noopener noreferrer" target="_blank">clarusclm.com/products</a></p>
+  </article>
+  <div class="sep"></div>
+
+  <!-- 02 HARNESS -->
+  <article class="entry">
+    <div class="meta"><span class="entry-num">02</span><span class="kind">Two specifications</span><span class="yr">2026</span></div>
+    <h3>Agent harness architecture</h3>
+    <p class="opener">Two specifications for long-running agent systems, one for a single operator and one for an organization. The second was written by taking the first apart and asking which of its invariants stop being true once there are many people, many permissions, and an erasure request.</p>
+    <p class="standfirst opener-2">Models change quarterly. The harness around them is the durable asset, which is the entire argument for writing these down.</p>
+    <div class="w1"></div>
+  </article>
+
+  <!-- 02a RAG-OS -->
+  <article class="entry">
+    <div class="meta"><span class="entry-num">02a</span><span class="kind">Specification</span><span class="yr">2026</span><span class="yr">MIT</span></div>
+    <h4>RAG-OS</h4>
+    <p class="pos">A vendor-neutral blueprint plus a runnable stdlib-only starter for a self-hosted, always-on personal AI operating system. It is the compiled architecture of a system I actually run.</p>
+    <div class="figures">
+      <div><span class="fig-label">Model context held by the kernel</span><span class="fig-value is-zero">0</span></div>
+      <div><span class="fig-label">Config files naming a model</span><span class="fig-value">1</span></div>
+      <div><span class="fig-label">Token cost of the nightly evals</span><span class="fig-value is-zero">0</span></div>
+    </div>
+    <ol class="evidence full">
+      <li><span class="note"><span class="label">Compiled knowledge</span>A librarian-maintained Markdown wiki, read index-first. The hybrid index (BM25 keyword plus vector, fused with reciprocal rank fusion) is treated strictly as a rebuildable cache over the Markdown, never as a source of fact. Embeddings run locally on CPU through ONNX, so retrieval costs nothing.</span>A zero-context supervisor kernel: one always-on process that holds no model context and is the only writer of a SQLite database. All intelligence runs in short-lived spawned sessions, so a crash, a restart, or a model downgrade loses no durable state. Above it, an orchestrator and worker split: one durable conversational session decides and delegates, and ephemeral headless workers do the real repository edits and never talk to the human.</li>
+      <li><span class="note"><span class="label">Memory discipline</span>Superseded facts are invalidated into a history section excluded from retrieval instead of being deleted, so the knowledge base does not rot and old reasoning stays reconstructable.</span>Four persistence layers ordered by authority: a transactional operational database, git-tracked Markdown as compiled knowledge, mission ledgers carrying proofs, and disposable model transcripts. The transcript is the least authoritative artifact in the system, which is what makes context compaction safe to do at all.</li>
+      <li><span class="note"><span class="label">Disk verify</span>A deterministic disk-verify stamp fingerprints a repository before and after a worker runs, so a model that fabricates an edit that never landed is caught by the fingerprint instead of believed.</span>Security is enforced in code instead of in prompts, re-checked on every single tool call, failing closed, and audited. Path fences normalize against traversal, symlinks, directory junctions, home aliases, UNC and extended-length prefixes, and fail closed on any path that will not resolve. Dangerous actions sit behind an out-of-band single-use approval code with a short expiry.</li>
+      <li><span class="note"><span class="label">Nightly evals</span>A nightly deterministic zero-token evaluation suite runs the whole thing. Its most important check is a safety canary re-proving that the protected paths still deny.</span>Cost and vendor independence are policy, not habit. Code requests capabilities such as classify, workhorse, or deep reasoning; model names appear in exactly one config file, enforced by a check that fails if a model name appears anywhere else, so switching vendors is a config edit. A budget governor meters spend in plain code before a session spawns: degrade to cheaper models, then park background work, then park everything.</li>
+    </ol>
+    <div class="stack-fig">
+      <span class="lbl">Persistence layers</span>
+      <p class="cap">Authority increases downward.</p>
+      <div class="row"><span>Model transcripts</span><span class="w-d"></span><span>Disposable</span></div>
+      <div class="row"><span>Mission ledgers</span><span class="w-0"></span><span>Proofs</span></div>
+      <div class="row"><span>Git-tracked Markdown</span><span class="w-1"></span><span>Compiled knowledge</span></div>
+      <div class="row"><span>Operational database</span><span class="w-2"></span><span>Transactional</span></div>
+      <div class="row"><span>Writers to the database</span><span class="dim"></span><span class="one">1</span></div>
+    </div>
+    <dl class="stackline"><dt>Stack</dt><dd>Python (standard library only in the starter), SQLite, ONNX runtime, BM25, vector search, reciprocal rank fusion, git-tracked Markdown, MIT licensed</dd></dl>
+    <p class="links"><a href="https://github.com/csnyder256/RAG-OS" rel="noopener noreferrer" target="_blank">github.com/csnyder256/RAG-OS</a></p>
+  </article>
+  <div class="sep"></div>
+
+  <!-- 02b ORG-MEMORY-OS -->
+  <article class="entry">
+    <div class="meta"><span class="entry-num">02b</span><span class="kind">Specification</span><span class="yr">2026</span><span class="yr">MIT</span></div>
+    <h4>org-memory-os</h4>
+    <p class="pos">One shared, permission-aware, auditable AI memory that any number of employees use through their own agents, under one compaction and degradation-avoidance discipline. Published 2026.</p>
+    <div class="figures">
+      <div><span class="fig-label">Architectural pillars</span><span class="fig-value">13</span></div>
+      <div><span class="fig-label">Decision forks</span><span class="fig-value">70</span></div>
+      <div><span class="fig-label">Documented failure modes</span><span class="fig-value">38</span></div>
+      <div><span class="fig-label">Build milestones</span><span class="fig-value">16</span></div>
+      <div><span class="fig-label">Retention classes</span><span class="fig-value">4</span></div>
+    </div>
+    <ol class="evidence full">
+      <li><span class="note"><span class="label">The 70 forks</span>Each fork carries the options considered, a recommended default, and the reasoning, including the forks where carrying the single-user rule forward was the wrong answer.</span>The organizing idea is naming exactly which single-user invariant breaks at organizational scale and what replaces it. Single-writer state becomes one writer per aggregate with a fencing token. Identity as a boolean becomes an identity graph with fresh permission checks on the candidate set. One conversation window becomes windows scoped per surface and per thread. Invalidate-never-delete stays right for institutional knowledge and becomes wrong for personal data the moment erasure applies.</li>
+      <li><span class="note"><span class="label">The 16 milestones</span>Every milestone ends in a definition of done proven by a real command and its real output, so the build order is falsifiable rather than aspirational.</span>The data model is authority-ordered. An append-only bi-temporal claim ledger is truth, git-tracked Markdown is a projection of it, and the hybrid retrieval index is an explicitly rebuildable cache. Nothing downstream of the ledger is ever allowed to be the source of a fact.</li>
+      <li><span class="note"><span class="label">Provenance</span>Written out of a large adversarial research process. Every figure in it was independently fact-checked before publication. A Principal Cloud Architect at AWS starred the platform write-up that led to this being written.</span>Retrieval is permission-aware at the candidate set, filtered as the asking human through relationship-based access control with forced-fresh consistency. The generated answer is never filtered after the fact, and no shared service account holds the union of everyone's permissions. A cross-tenant isolation canary is a hard release gate: nightly it plants a unique marker in each team's memory and attempts to read another team's marker back through the real retrieval path, failing the build if that ever succeeds.</li>
+      <li>The coordination layer owns the conversation window in its own database and treats the model transcript as disposable, so each turn is reassembled from recent exchanges, fresh permission-filtered retrieval, and externalized knowledge. Prompt zoning keeps a stable cached prefix and confines volatile retrieved content to an uncached tail. Governance sits in the schema: four retention classes, per-subject crypto-shredding for personal data, a legal-hold table consulted before any deletion, and an immutable audit tier with citation-level logging, so the blast radius of a bad fact can be reconstructed.</li>
+    </ol>
+    <dl class="stackline"><dt>Stack</dt><dd>Architecture specification: bi-temporal claim ledger, relationship-based access control, hybrid retrieval with reciprocal rank fusion, prompt zoning, crypto-shredding, immutable audit tier, MIT licensed</dd></dl>
+    <p class="links"><a href="https://github.com/csnyder256/org-memory-os" rel="noopener noreferrer" target="_blank">github.com/csnyder256/org-memory-os</a></p>
+  </article>
+
+  <!-- 02c EVAL -->
+  <h4 class="eval-h" id="h-eval">The eval that matters most</h4>
+  <dl class="eval" aria-labelledby="h-eval">
+    <dt>Metric</dt><dd>A protected path denies, and the denial is readable back out of the audit table.</dd>
+    <dt>Test set</dt><dd>The real tool path rather than a mock, exercised nightly by a deterministic zero-token suite, so it costs nothing to run and cannot drift when a model changes.</dd>
+    <dt>Why it exists</dt><dd>The agent SDK's own permission callback was silently shadowed, fired zero times, and let a fenced read through. Enforcement moved to a hook that fires under every permission mode, and a live canary now re-proves the denial every night.</dd>
+  </dl>
+  <p class="print-only col">Full evidence ledger, margin notes and the harness breakdown at https://csnyder256.github.io/</p>
+
+  <!-- 02d FOUR PARTS -->
+  <div class="harness-block" style="display:contents">
+  <dl class="dl harness">
+    <dt>Agent loop</dt><dd>Orchestrator and worker split. One durable conversational session decides and delegates; ephemeral headless workers do the repository edits and never talk to the human.</dd>
+    <dt>Tool interface</dt><dd>Permission hooks that fire on every tool call, path fences normalized against traversal, symlinks, junctions, home aliases and UNC prefixes, out-of-band single-use approval codes on dangerous actions, and a disk-verify fingerprint on whatever a worker claims it changed.</dd>
+    <dt>Context management</dt><dd>Four persistence layers ordered by authority, transcripts treated as disposable, compaction that reassembles each turn from recent exchanges plus fresh permission-filtered retrieval plus externalized knowledge, and prompt zoning that keeps the cached prefix stable.</dd>
+    <dt>Control mechanisms</dt><dd>A capability-based model registry with a single-source check on model names, a budget governor with three degradation stages enforced before a session spawns, and a nightly zero-token eval suite whose most important check is a safety canary.</dd>
+  </dl>
+  </div>
+  <div class="closed"></div>
+
+  <!-- 03 UX -->
+  <article class="entry">
+    <div class="meta"><span class="entry-num">03</span><span class="kind">SaaS</span><span class="yr">2026</span></div>
+    <h3>ux-struggle-detector</h3>
+    <p class="pos">Multi-tenant SaaS that reads a customer's own repository to understand their app, then detects user struggle server-side and answers inside the same request.</p>
+    <div class="figures">
+      <div><span class="fig-label">Tests green in CI</span><span class="fig-value">165</span></div>
+      <div><span class="fig-label">Detection rules</span><span class="fig-value">40</span></div>
+      <div><span class="fig-label">Round trips added</span><span class="fig-value is-zero">0</span></div>
+    </div>
+    <ol class="evidence tight">
+      <li>Maps a customer web app by Babel AST parsing of its GitHub repository, producing the structure the detection rules run against.</li>
+      <li>Runs 40 struggle-detection rules server-side over hydrated cross-request session history and returns interventions in the same HTTP response the events arrived in, so detection adds no extra round trip.</li>
+      <li>Dependency-free browser SDK, client-side PII scrubbing, AES-GCM encrypted key storage.</li>
+    </ol>
+    <dl class="stackline"><dt>Stack</dt><dd>TypeScript, Next.js 15, React, Prisma, PostgreSQL, Playwright</dd></dl>
+    <p class="links"><a href="https://github.com/csnyder256/ux-struggle-detector" rel="noopener noreferrer" target="_blank">github.com/csnyder256/ux-struggle-detector</a></p>
+  </article>
+  <div class="sep"></div>
+
+  <!-- 04 OPTIONS -->
+  <article class="entry">
+    <div class="meta"><span class="entry-num">04</span><span class="kind">Research</span><span class="yr">2026</span></div>
+    <h3 class="sep-row"><span>shadow-options-trading-lab</span><span>option-contract-grader</span></h3>
+    <p class="pos">Twenty strategies evaluated against live market data with zero orders placed, and a 6,000-name universe priced from first principles instead of from a vendor field.</p>
+    <div class="figures">
+      <div><span class="fig-label">shadow-options-trading-lab</span><span class="fig-value">726</span></div>
+      <div><span class="fig-label">option-contract-grader</span><span class="fig-value">49</span></div>
+      <div><span class="fig-label">Strategies</span><span class="fig-value">20</span></div>
+      <div><span class="fig-label">Optionable universe</span><span class="fig-value">6,000</span></div>
+      <div><span class="fig-label">Orders placed</span><span class="fig-value is-zero">0</span></div>
+    </div>
+    <ol class="evidence tight">
+      <li>Runs 20 options strategies against live market data in shadow mode, placing zero orders. A subprocess-isolated test proves no order-placement code is reachable from the live path.</li>
+      <li>Grades results with anytime-valid e-processes (test martingales, Ville's inequality), so nightly evaluation stays statistically valid under continuous monitoring.</li>
+      <li>The grader sweeps a 6,000-name optionable universe, solving implied volatility and the Greeks from Black-Scholes-Merton locally instead of trusting vendor values, and scores every contract into A to F grades.</li>
+    </ol>
+    <dl class="stackline"><dt>Stack</dt><dd>Python, numpy, pandas, FastAPI, SQLite, pytest, Hypothesis property-based fuzzing, GitHub Actions CI</dd></dl>
+    <p class="links sep-row"><a href="https://github.com/csnyder256/shadow-options-trading-lab" rel="noopener noreferrer" target="_blank">shadow-options-trading-lab</a><a href="https://github.com/csnyder256/option-contract-grader" rel="noopener noreferrer" target="_blank">option-contract-grader</a></p>
+  </article>
+  <div class="sep"></div>
+
+  <!-- 05 ALSO PUBLIC -->
+  <article class="entry" id="also-public">
+    <div class="meta"><span class="entry-num">05</span></div>
+    <p class="body" style="font-size:var(--fs-note);line-height:1.4667;color:var(--ink-2)">Also public: gba-rom-hack-ide, which exposes 71 tools through a Model Context Protocol server so a coding agent can edit a game directly, and grain-bids-to-excel, 97 tests green in CI. Together with the four systems above they account for the 1,037 tests.</p>
+  </article>
+</section>
+
+<!-- ============ EVIDENCE ============ -->
+<section class="dept" id="evidence" aria-labelledby="h-evidence">
+  <h2 id="h-evidence">Evidence</h2>
+  <div role="group" aria-label="Filter evidence by system" class="filterbar" hidden>
+    <button type="button" data-filter="all" aria-pressed="true">All <span>10</span></button>
+    <button type="button" data-filter="rag-os" aria-pressed="false">RAG-OS <span>6</span></button>
+    <button type="button" data-filter="org-memory-os" aria-pressed="false">org-memory-os <span>2</span></button>
+    <button type="button" data-filter="shadow-options" aria-pressed="false">shadow-options <span>1</span></button>
+    <button type="button" data-filter="clarus" aria-pressed="false">Clarus <span>1</span></button>
+  </div>
+  <p class="filter-status" role="status" aria-live="polite">Showing 10 of 10.</p>
+  <ol class="ledger" data-filter="all">
+    <li data-system="rag-os"><span class="m"><span class="idx">01</span><span class="src">RAG-OS</span></span><span class="c">A permission callback that fired zero times let a fenced read through; enforcement moved to a hook that fires under every permission mode, verified by a live canary that reads a real denial back out of the audit table.</span></li>
+    <li data-system="org-memory-os"><span class="m"><span class="idx">02</span><span class="src">org-memory-os</span></span><span class="c">A nightly cross-tenant isolation canary plants a unique marker in each team's memory and attempts to read another team's marker back through the real retrieval path, and the build fails if it ever succeeds.</span></li>
+    <li data-system="rag-os"><span class="m"><span class="idx">03</span><span class="src">RAG-OS</span></span><span class="c">A deterministic disk-verify stamp fingerprints a repository before and after a worker runs, so a model that fabricates an edit that never landed is caught by the fingerprint instead of believed.</span></li>
+    <li data-system="shadow-options"><span class="m"><span class="idx">04</span><span class="src">shadow-options-trading-lab</span></span><span class="c">A subprocess-isolated test proves no order-placement code is reachable from the live path, which is why 20 strategies can run against live market data with zero orders placed.</span></li>
+    <li data-system="rag-os"><span class="m"><span class="idx">05</span><span class="src">RAG-OS</span></span><span class="c">Model names appear in exactly one config file, enforced by a check that fails if a model name appears anywhere else, so changing vendors is a config edit.</span></li>
+    <li data-system="rag-os"><span class="m"><span class="idx">06</span><span class="src">RAG-OS</span></span><span class="c">Path fences are normalized against traversal, symlinks, directory junctions, home aliases, UNC and extended-length prefixes, and fail closed on any path that will not resolve.</span></li>
+    <li data-system="rag-os"><span class="m"><span class="idx">07</span><span class="src">RAG-OS</span></span><span class="c">Dangerous actions are gated behind an out-of-band single-use approval code with a short expiry, enforced in code before execution instead of asked for in a prompt.</span></li>
+    <li data-system="rag-os"><span class="m"><span class="idx">08</span><span class="src">RAG-OS</span></span><span class="c">The nightly evaluation suite is deterministic and spends zero tokens, so the safety canary can run every night at no cost.</span></li>
+    <li data-system="org-memory-os"><span class="m"><span class="idx">09</span><span class="src">org-memory-os</span></span><span class="c">Every one of the 16 milestones ends in a definition of done proven by a real command and its real output, and every figure in the guide was independently fact-checked before publication.</span></li>
+    <li data-system="clarus"><span class="m"><span class="idx">10</span><span class="src">Clarus</span></span><span class="c">Per-request tenant isolation is enforced in the database by PostgreSQL row-level security across 263 tables, under 203 migrations and 10 backend services.</span></li>
+  </ol>
+</section>
+
+<!-- ============ TECHNICAL DEPTH ============ -->
+<section class="dept" id="depth" aria-labelledby="h-depth">
+  <h2 id="h-depth">Technical depth</h2>
+  <dl class="dl depth">
+    <dt>AI systems and integration</dt><dd>OpenAI API, Anthropic Claude API, self-hosted LLM serving on vLLM, local ONNX embedding inference, structured-output enforcement, prompt engineering, per-tenant key routing, token quotas, PII anonymization with Presidio, Model Context Protocol</dd>
+    <dt>Agent harness and evaluation</dt><dd>Agent harness design, AI agents and agentic workflows, permission hooks and tool gating, context compaction, token budgeting and cost governance, evaluation harnesses, audit logging</dd>
+    <dt>Retrieval and memory</dt><dd>Retrieval-augmented generation, embeddings and semantic search, hybrid retrieval with reciprocal rank fusion, BM25 plus vector fusion, pgvector, vector search, index-as-cache design, invalidate-never-delete memory discipline</dd>
+    <dt>Languages</dt><dd>Python, TypeScript, JavaScript, Go, SQL, HTML/CSS</dd>
+    <dt>Backend and distributed systems</dt><dd>FastAPI, Flask, Node.js, REST APIs, async SQLAlchemy 2.0, Pydantic v2, Alembic, distributed systems, transactional outbox, Kafka-wire messaging, WebSockets, authentication, encryption</dd>
+    <dt>Data</dt><dd>PostgreSQL 16, row-level security, SQLite, Prisma, Redis, AWS S3, data pipelines, ETL, numpy, pandas</dd>
+    <dt>Frontend</dt><dd>React 19, Next.js App Router, Tailwind CSS, TipTap/ProseMirror, Yjs, Zustand</dd>
+    <dt>Testing and infrastructure</dt><dd>pytest, vitest, Playwright, Hypothesis property-based fuzzing, chaos testing, Docker, GitHub Actions CI/CD, Helm, Vercel, Railway</dd>
+  </dl>
+  <div class="closed"></div>
+</section>
+
+<!-- ============ RECORD ============ -->
+<section class="dept" id="record" aria-labelledby="h-record">
+  <h2 id="h-record">Record</h2>
+  <dl class="dl rec">
+    <dt><time datetime="2026-03">Mar 2026</time><br>to present</dt>
+    <dd><span class="t">Software Engineer, Clarus platform</span><span class="d">Four B2B SaaS products in one production monorepo. Detailed above.</span></dd>
+    <dt class="past">2019<br>to 2025</dt>
+    <dd class="past"><span class="t">Before software</span><span class="d">Security Officer at Per Mar Security Services, Davenport IA, Mar 2023 to Nov 2025, on campus security for Palmer College of Chiropractic; auto detailing and car wash supervision, 2019 to 2023.</span></dd>
+  </dl>
+  <p class="after-record"><a class="btn-dl" href="/Cade-Snyder-Resume.pdf">Resume PDF, 2 pp.</a><button type="button" class="btn-print" hidden>Print this page</button></p>
+</section>
+
+<!-- ============ CERTIFICATION ============ -->
+<section class="dept" id="cert" aria-labelledby="h-cert">
+  <h2 id="h-cert">Certification and affiliation</h2>
+  <dl class="dl">
+    <dt>Certification</dt><dd style="font-size:var(--fs-note)">Anthropic Skilljar Certified.</dd>
+    <dt>Advisory</dt><dd style="font-size:var(--fs-note)">Technical advisor to Varde Labs, an AI-integration firm. Informal and unpaid.</dd>
+  </dl>
+</section>
+
+<!-- ============ CONTACT ============ -->
+<section class="dept reset" id="contact" aria-labelledby="h-contact">
+  <h2 id="h-contact">Contact</h2>
+  <div class="contact">
+    <p><a data-mail href="#contact">snydercade123 at gmail dot com</a></p>
+    <p><a href="https://github.com/csnyder256" rel="noopener noreferrer" target="_blank">github.com/csnyder256</a></p>
+    <p>LeClaire, IA</p>
+  </div>
+  <div class="closed"></div>
+</section>
+
+</div>
+</main>
+
+<footer class="colophon">
+  <div>
+    <span>Last updated <time datetime="2026-07-23">2026-07-23</time>.</span>
+    <span>Set in Newsreader and IBM Plex Mono, self-hosted.</span>
+    <span>No frameworks, no third-party requests.</span>
+    <span>Every figure on this page is measured.</span>
+    <span>The two-page PDF is rendered from the same source as this page.</span>
+    <span class="mark">[ CS 2026 ]</span>
+  </div>
+</footer>
+
+<script>
+(function(){
+  var u="snydercade123", d="gmail.com";
+  Array.prototype.forEach.call(document.querySelectorAll("[data-mail]"), function(a){
+    a.href="mailto:"+u+"@"+d; a.textContent=u+"@"+d;
+  });
+  Array.prototype.forEach.call(document.querySelectorAll(".btn-print"), function(b){
+    b.hidden=false;
+    b.addEventListener("click", function(){ window.print(); });
+  });
+  var bar=document.querySelector(".filterbar"),
+      list=document.querySelector(".ledger"),
+      out=document.querySelector(".filter-status");
+  if(!bar||!list) return;
+  var rows=list.children;
+  function apply(v){
+    list.dataset.filter=v;
+    var n=0,i;
+    for(i=0;i<rows.length;i++){ if(v==="all"||rows[i].dataset.system===v) n++; }
+    for(i=0;i<bar.children.length;i++){
+      bar.children[i].setAttribute("aria-pressed", String(bar.children[i].dataset.filter===v));
+    }
+    out.textContent="Showing "+n+" of "+rows.length+".";
+  }
+  bar.addEventListener("click", function(e){
+    var b=e.target.closest("button[data-filter]");
+    if(b) apply(b.dataset.filter);
+  });
+  bar.addEventListener("keydown", function(e){ if(e.key==="Escape") apply("all"); });
+  window.addEventListener("beforeprint", function(){ apply("all"); });
+  bar.hidden=false;
+})();
+</script>
+</body>
+</html>
