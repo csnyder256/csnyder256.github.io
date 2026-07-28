@@ -10,7 +10,7 @@
 <meta property="profile:first_name" content="Cade">
 <meta property="profile:last_name" content="Snyder">
 <meta property="og:title" content="Cade Snyder | AI Systems and Integration Engineer">
-<meta property="og:description" content="Agent harness architecture, permission-enforced tool gating, retrieval and memory design. Four live B2B products. 1,037 tests green in CI across public repositories.">
+<meta property="og:description" content="Agent harness architecture, permission-enforced tool gating, retrieval and memory design. Four live B2B products. 1,159 tests green in CI across public repositories.">
 <meta property="og:url" content="https://csnyder256.github.io/">
 <meta property="og:image" content="https://csnyder256.github.io/og.png">
 <meta property="og:image:width" content="1200">
@@ -295,6 +295,7 @@ a{color:var(--ink);text-decoration:underline;text-decoration-color:var(--accent)
 .ledger .c{grid-column:main-start / main-end;font-size:1rem;line-height:1.5;max-inline-size:34rem}
 .ledger[data-filter="rag-os"] > li:not([data-system="rag-os"]),
 .ledger[data-filter="org-memory-os"] > li:not([data-system="org-memory-os"]),
+.ledger[data-filter="harness-tuner"] > li:not([data-system="harness-tuner"]),
 .ledger[data-filter="shadow-options"] > li:not([data-system="shadow-options"]),
 .ledger[data-filter="clarus"] > li:not([data-system="clarus"]){display:none}
 
@@ -496,7 +497,7 @@ a{color:var(--ink);text-decoration:underline;text-decoration-color:var(--accent)
     <span><a class="btn-dl" href="/Cade-Snyder-Resume.pdf">Resume PDF, 2 pp.</a><button type="button" class="btn-print" hidden>Print this page</button></span>
   </div>
   <div class="figures">
-    <div><span class="fig-label">Tests green in CI</span><span class="fig-value">1,037</span></div>
+    <div><span class="fig-label">Tests green in CI</span><span class="fig-value">1,159</span></div>
     <div><span class="fig-label">HTTP endpoints</span><span class="fig-value">1,019</span></div>
     <div><span class="fig-label">PostgreSQL tables</span><span class="fig-value">263</span></div>
     <div><span class="fig-label">Live B2B products</span><span class="fig-value">4</span></div>
@@ -623,7 +624,28 @@ a{color:var(--ink);text-decoration:underline;text-decoration-color:var(--accent)
     <p class="links"><a href="https://github.com/csnyder256/org-memory-os" rel="noopener noreferrer" target="_blank">github.com/csnyder256/org-memory-os</a></p>
   </article>
 
-  <!-- 02c EVAL -->
+  <!-- 02c HARNESS-TUNER -->
+  <article class="entry">
+    <div class="meta"><span class="entry-num">02c</span><span class="kind">Tool</span><span class="yr">2026</span><span class="yr">MIT</span></div>
+    <h4>harness-tuner</h4>
+    <p class="pos">The two specifications above argue that the harness is the durable asset. This measures one. It reads any harness through an adapter, reports where the scaffolding wastes the model, proposes a change, and then proves whether the change helped. Published 2026.</p>
+    <div class="figures">
+      <div><span class="fig-label">Metric definitions fixed by the protocol</span><span class="fig-value">24</span></div>
+      <div><span class="fig-label">Conformance fixtures a reimplementation must pass</span><span class="fig-value">10</span></div>
+      <div><span class="fig-label">Runtime dependencies</span><span class="fig-value is-zero">0</span></div>
+      <div><span class="fig-label">Measurements published about anyone's harness</span><span class="fig-value is-zero">0</span></div>
+    </div>
+    <ol class="evidence full">
+      <li><span class="note"><span class="label">Why zero published measurements</span>A leaderboard between products goes stale within weeks, invites methodology fights, and is almost always run by someone with a stake. Every number the tool produces belongs to whoever ran it.</span>The rule the whole design rests on is that a value the adapter could not observe is null, and null reports as unavailable with a reason rather than as zero. Without that, a harness whose adapter cannot see prompt caching looks identical to one that genuinely caches nothing, and the tool has invented a finding out of a gap in its own instrumentation. Two conformance fixtures exist only to pin the distinction: one where an adapter that sees nothing but tool names must report nineteen of twenty-four metrics unavailable without producing a single zero, and one where an explicitly reported zero must come out measured.</li>
+      <li><span class="note"><span class="label">The check that found it</span>Every setting is read through a dotted path, so a consumer necessarily contains the setting's literal name and the check is mechanical rather than a review.</span>A check that every configuration setting is actually read by something found, on its first run, that twelve of twenty-nine were accepted, type-checked, validated against their legal values, documented, written into the run artifacts, and read by absolutely nothing. The cause was that the function building the artifact stamp lived inside the configuration module, so every setting looked consumed because the module echoed it back to itself. The fix was to wire all twelve rather than to loosen the check, and a test now proves the check can still fail.</li>
+      <li><span class="note"><span class="label">Measured, not asserted</span>Over a thousand simulated null sequences with the threshold checked at every prefix, the false positive rate came out at three percent against a nominal five. A real effect was detected in 198 of 200 runs at a median of 18 trials.</span>Whether a change helped is decided by an anytime-valid e-process rather than a p-value, because trials cost real money and the person running it is going to watch the number regardless. Peeking after every trial is safe by construction instead of by discipline, and the run stops as soon as the evidence is conclusive. It reports an e-value, never a p-value, and returns one of three answers: confirmed, refuted, or unproven, where unproven means add more trials rather than the change failed.</li>
+      <li>Detection is arithmetic rather than judgement. Every finding is produced by counting things in traces and carries the exact steps it came from, and the diagnostician model is explicitly instructed not to add findings of its own, because a model asked to find problems in a trace will find them in any trace and none of them will come with a step number. Proposals carry a bound computed from the observed run, at most nine of these reads were avoidable because each had already been performed earlier in the same task, rather than a forecast nobody can check. The tool never edits the harness it measures.</li>
+    </ol>
+    <dl class="stackline"><dt>Stack</dt><dd>Python standard library only, enforced by an import check in CI across three operating systems and three versions, plus a container image, declarative TOML evaluation packs, anytime-valid sequential testing, MIT licensed</dd></dl>
+    <p class="links"><a href="https://github.com/csnyder256/harness-tuner" rel="noopener noreferrer" target="_blank">github.com/csnyder256/harness-tuner</a></p>
+  </article>
+
+  <!-- 02d EVAL -->
   <h4 class="eval-h" id="h-eval">The eval that matters most</h4>
   <dl class="eval" aria-labelledby="h-eval">
     <dt>Metric</dt><dd>A protected path denies, and the denial is readable back out of the audit table.</dd>
@@ -688,7 +710,7 @@ a{color:var(--ink);text-decoration:underline;text-decoration-color:var(--accent)
   <!-- 05 ALSO PUBLIC -->
   <article class="entry" id="also-public">
     <div class="meta"><span class="entry-num">05</span></div>
-    <p class="body" style="font-size:var(--fs-note);line-height:1.4667;color:var(--ink-2)">Also public: gba-rom-hack-ide, which exposes 71 tools through a Model Context Protocol server so a coding agent can edit a game directly, and grain-bids-to-excel, 97 tests green in CI. Together with the four systems above they account for the 1,037 tests.</p>
+    <p class="body" style="font-size:var(--fs-note);line-height:1.4667;color:var(--ink-2)">Also public: gba-rom-hack-ide, which exposes 71 tools through a Model Context Protocol server so a coding agent can edit a game directly, and grain-bids-to-excel, 97 tests green in CI. Together with the four systems above and harness-tuner, whose 122 run on three operating systems and three Python versions per push, they account for the 1,159 tests.</p>
   </article>
 </section>
 
@@ -696,13 +718,14 @@ a{color:var(--ink);text-decoration:underline;text-decoration-color:var(--accent)
 <section class="dept" id="evidence" aria-labelledby="h-evidence">
   <h2 id="h-evidence">Evidence</h2>
   <div role="group" aria-label="Filter evidence by system" class="filterbar" hidden>
-    <button type="button" data-filter="all" aria-pressed="true">All <span>10</span></button>
+    <button type="button" data-filter="all" aria-pressed="true">All <span>13</span></button>
     <button type="button" data-filter="rag-os" aria-pressed="false">RAG-OS <span>6</span></button>
+    <button type="button" data-filter="harness-tuner" aria-pressed="false">harness-tuner <span>3</span></button>
     <button type="button" data-filter="org-memory-os" aria-pressed="false">org-memory-os <span>2</span></button>
     <button type="button" data-filter="shadow-options" aria-pressed="false">shadow-options <span>1</span></button>
     <button type="button" data-filter="clarus" aria-pressed="false">Clarus <span>1</span></button>
   </div>
-  <p class="filter-status" role="status" aria-live="polite">Showing 10 of 10.</p>
+  <p class="filter-status" role="status" aria-live="polite">Showing 13 of 13.</p>
   <ol class="ledger" data-filter="all">
     <li data-system="rag-os"><span class="m"><span class="idx">01</span><span class="src">RAG-OS</span></span><span class="c">A permission callback that fired zero times let a fenced read through; enforcement moved to a hook that fires under every permission mode, verified by a live canary that reads a real denial back out of the audit table.</span></li>
     <li data-system="org-memory-os"><span class="m"><span class="idx">02</span><span class="src">org-memory-os</span></span><span class="c">A nightly cross-tenant isolation canary plants a unique marker in each team's memory and attempts to read another team's marker back through the real retrieval path, and the build fails if it ever succeeds.</span></li>
@@ -714,6 +737,9 @@ a{color:var(--ink);text-decoration:underline;text-decoration-color:var(--accent)
     <li data-system="rag-os"><span class="m"><span class="idx">08</span><span class="src">RAG-OS</span></span><span class="c">The nightly evaluation suite is deterministic and spends zero tokens, so the safety canary can run every night at no cost.</span></li>
     <li data-system="org-memory-os"><span class="m"><span class="idx">09</span><span class="src">org-memory-os</span></span><span class="c">Every one of the 16 milestones ends in a definition of done proven by a real command and its real output, and every figure in the guide was independently fact-checked before publication.</span></li>
     <li data-system="clarus"><span class="m"><span class="idx">10</span><span class="src">Clarus</span></span><span class="c">Per-request tenant isolation is enforced in the database by PostgreSQL row-level security across 263 tables, under 203 migrations and 10 backend services.</span></li>
+    <li data-system="harness-tuner"><span class="m"><span class="idx">11</span><span class="src">harness-tuner</span></span><span class="c">A check that every configuration setting is read by something found twelve of twenty-nine that were accepted, validated, documented, written into the artifacts, and read by nothing. All twelve were wired rather than the check loosened, and a test now proves the check can still fail.</span></li>
+    <li data-system="harness-tuner"><span class="m"><span class="idx">12</span><span class="src">harness-tuner</span></span><span class="c">A value the adapter could not observe reports as unavailable with a reason, never as zero, so a harness whose instrumentation cannot see prompt caching is never mistaken for one that caches nothing. Two conformance fixtures exist only to pin that distinction.</span></li>
+    <li data-system="harness-tuner"><span class="m"><span class="idx">13</span><span class="src">harness-tuner</span></span><span class="c">Whether an applied change helped is decided by an anytime-valid e-process, measured at three percent false positives against a nominal five over a thousand null runs with the threshold checked at every prefix, so watching a running comparison after every trial is safe by construction.</span></li>
   </ol>
 </section>
 
